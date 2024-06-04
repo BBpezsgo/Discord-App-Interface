@@ -1,0 +1,173 @@
+<style>
+    html,
+    body,
+    #container {
+        width: 100%;
+        height: 100%;
+    }
+
+    #container {
+        display: flex;
+        overflow: hidden;
+        flex-direction: row;
+        background-color: var(--background-primary);
+    }
+</style>
+<div id="container">
+    <style>
+        #sidebar {
+            display: flex;
+            flex: 1 0 var(--custom-standard-sidebar-view-sidebar-total-width);
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--background-secondary);
+            overflow: hidden scroll;
+            padding-right: 0px;
+            width: var(--custom-standard-sidebar-view-sidebar-total-width);
+            padding: 60px var(--custom-standard-sidebar-view-sidebar-content-scrollbar-padding)60px var(--custom-standard-sidebar-view-standard-padding);
+        }
+
+        #sidebar>h2 {
+            font-family: var(--font-display);
+            font-size: 12px;
+            line-height: 1.3333333333333333;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow-x: hidden;
+            letter-spacing: .02em;
+            padding: 6px 0px 10px 10px;
+            color: var(--channels-default);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        #sidebar>a {
+            padding: 6px 10px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+            margin-bottom: 2px;
+            border-radius: 4px;
+            color: var(--interactive-normal);
+            cursor: pointer;
+            user-select: none;
+            font-weight: 500;
+        }
+
+        #sidebar>a.active {
+            background-color: var(--background-modifier-selected);
+            color: var(--interactive-active);
+            cursor: default;
+        }
+
+        #sidebar>a:hover {
+            background-color: var(--background-modifier-hover);
+        }
+
+        #sidebar>a:active {
+            background-color: var(--background-modifier-active);
+        }
+    </style>
+    <nav id="sidebar">
+        <h2>
+            Bot
+        </h2>
+        <a id="settings-account">
+            Account
+        </a>
+        <a id="settings-client">
+            Client
+        </a>
+        <a id="settings-application">
+            Application
+        </a>
+    </nav>
+
+    <style>
+        #content-container {
+            position: relative;
+            flex: 1 1 800px;
+            background: var(--background-primary);
+            overflow: hidden;
+        }
+    </style>
+    <div id="content-container">
+        <style>
+            #content {
+                padding: 60px 40px 80px;
+                font-family: var(--font-display);
+                margin-right: 40px;
+            }
+
+            #content>div>div>div>span {
+                color: var(--header-secondary);
+                font-family: var(--font-display);
+                font-size: 12px;
+                line-height: 1.3333333333333333;
+            }
+
+            #content h2 {
+                color: var(--header-primary);
+                margin-bottom: 20px;
+                font-size: 20px;
+                line-height: 24px;
+                font-weight: 600;
+            }
+
+            #content h3 {
+                color: var(--header-secondary);
+                font-family: var(--font-display);
+                font-size: 12px;
+                line-height: 1.3333333333333333;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: .02em;
+            }
+
+            #content>div>div:not(:first-of-type) {
+                margin-top: 40px;
+            }
+        </style>
+        <div id="content">
+
+        </div>
+        <div style="position:fixed;top:0px;right:0px;">
+            <style>
+                #back {
+                    margin-right: 21px;
+                    width: 60px;
+                    margin-top: 60px;
+                    position: fixed;
+                    right: 0;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    color: var(--interactive-normal);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    flex: 0 0 36px;
+                    border-width: 2px;
+                    border-style: solid;
+                    border-radius: 50%;
+                    width: 36px;
+                    height: 36px;
+                    cursor: pointer;
+                }
+            </style>
+            <a id="back" href="/">
+                <svg width="18" height="18" viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                        d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z">
+                    </path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <script src="/scripts/settings.js"></script>
+</div>

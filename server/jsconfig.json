@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "skipDefaultLibCheck": true,
+        "skipLibCheck": true
+    }
+}

@@ -1,0 +1,58 @@
+<div>
+    <style>
+        #content>div>div>div {
+            margin-bottom: 14px;
+        }
+    </style>
+
+    <div>
+        <h2>Client</h2>
+        
+        <div>
+            <h3>Ready at</h3>
+            <span>{{readyAt}}</span>
+        </div>
+        
+        <div>
+            <h3>Uptime</h3>
+            <span><span id="client-uptime">{{uptime}}</span> ms</span>
+        </div>
+    </div>
+
+    {{#if rest}}
+    <div>
+        <h2>REST</h2>
+        
+        <div>
+            <h3>Global Remaining</h3>
+            <span>{{rest.globalRemaining}}</span>
+        </div>
+        
+        <div>
+            <h3>Global Reset</h3>
+            <span>{{rest.globalReset}}</span>
+        </div>
+    </div>
+    {{/if}}
+
+    {{#if ws}}
+    <div>
+        <h2>WebSocket</h2>
+        
+        <div>
+            <h3>Status</h3>
+            <span id="client-status">{{ws.status}}</span>
+        </div>
+        
+        <div>
+            <h3>Gateway</h3>
+            <span>{{ws.gateway}}</span>
+        </div>
+        
+        <div>
+            <h3>Ping</h3>
+            <span><span id="client-ping">{{ws.ping}}</span> ms</span>
+        </div>
+    </div>
+    {{/if}}
+</div>

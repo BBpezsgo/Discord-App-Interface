@@ -1,0 +1,312 @@
+<style>
+    html,
+    body,
+    #home-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    #home-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+
+    #home-content {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        flex: 1 1;
+        background-color: var(--bg-overlay-chat, var(--background-primary));
+    }
+
+    #home-top {
+        flex: 0 0 48px;
+        padding: 0px 8px;
+        box-shadow: var(--elevation-low);
+        display: flex;
+    }
+
+    #home-top>div:nth-child(1) {
+        position: relative;
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+        overflow: hidden;
+    }
+
+    #home-top>div:nth-child(1)>svg {
+        position: relative;
+        flex: 0 0 auto;
+        margin: 0 8px;
+        display: block;
+        width: 24px;
+        height: 24px;
+        color: var(--channel-icon);
+    }
+
+    #home-top>div:nth-child(1)>h1 {
+        margin: 0 8px 0 0;
+        flex: 0 0 auto;
+        min-width: auto;  
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        overflow: hidden;
+        white-space: nowrap;
+        font-family: var(--font-display);
+        font-size: 16px;
+        line-height: 1.25;
+        font-weight: 600;
+        color: var(--header-primary);
+    }
+
+    #home-top>div:nth-child(2) {
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+    }
+</style>
+
+<div id="home-container">
+    {{>guilds-sidebar}}
+
+    {{>home-channels}}
+
+    <main id="home-content">
+        <section id="home-top">
+            <div>
+                <svg x="0" y="0" role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M13 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" class=""></path><path fill="currentColor" d="M3 5v-.75C3 3.56 3.56 3 4.25 3s1.24.56 1.33 1.25C6.12 8.65 9.46 12 13 12h1a8 8 0 0 1 8 8 2 2 0 0 1-2 2 .21.21 0 0 1-.2-.15 7.65 7.65 0 0 0-1.32-2.3c-.15-.2-.42-.06-.39.17l.25 2c.02.15-.1.28-.25.28H9a2 2 0 0 1-2-2v-2.22c0-1.57-.67-3.05-1.53-4.37A15.85 15.85 0 0 1 3 5Z"></path></svg>
+                <h1>Users</h1>
+            </div>
+            <div>
+                
+            </div>
+        </section>
+
+        <style>
+            #home-main {
+                overflow-y: auto;
+                overflow-x: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            #home-main>hr {
+                margin-left: 30px;
+                margin-right: 20px;
+                width: unset;
+            }
+        </style>
+        <div id="home-main">
+            <style>
+                #search-bar {
+                    margin: 16px 20px 8px 30px;
+                    flex: none;
+                    margin-bottom: 20px;
+                }
+
+                #search-bar>div {
+                    display: flex;
+                }
+
+                #search-bar>div:nth-child(1)>div {
+                    box-sizing: border-box;
+                    position: relative;
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: row;
+                    flex-wrap: wrap;
+                    padding: 1px;
+                    min-width: 0;
+                    align-items: center;
+                    background: var(--bg-overlay-4, var(--background-tertiary));
+                    margin-right: 10px;
+                }
+
+                #search-bar>div:nth-child(1)>div>input {
+                    font-size: 16px;
+                    line-height: 32px;
+                    height: 30px;
+                    padding: 0 8px;
+                    box-sizing: border-box;
+                    background: transparent;
+                    border: none;
+                    resize: none;
+                    flex: 1;
+                    min-width: 48px;
+                    margin: 1px;
+                    appearance: none;
+                    color: var(--text-normal);
+                }
+
+                #search-bar>div:nth-child(1)>div>div {
+                    box-sizing: border-box;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    cursor: text;
+                    width: 32px;
+                    height: 32px;
+                }
+
+                #search-bar>div:nth-child(1)>div>div>svg {
+                    width: 20px;
+                    height: 20px;
+                    box-sizing: border-box;
+                    transition: transform.1s ease-out, opacity.1s ease-out;
+                    color: var(--interactive-normal);
+                }
+            </style>
+            <div id="search-bar">
+                <div>
+                    <div>
+                        <input type="text" placeholder="User ID" id="input-fetch-user">
+                        <!--
+                        <div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path fill="currentColor" fill-rule="evenodd"
+                                    d="M15.62 17.03a9 9 0 1 1 1.41-1.41l4.68 4.67a1 1 0 0 1-1.42 1.42l-4.67-4.68ZM17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+                                    clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        -->
+                    </div>
+                    
+                    <button class="button button-primary" onclick="getUser(document.getElementById('input-fetch-user').value, true).then(console.log).catch(error => { const errorElement = document.getElementById('user-fetch-error'); errorElement.textContent = error + ''; errorElement.style.display = 'block'; })">
+                        Fetch
+                    </button>
+                </div>
+                <div id="user-fetch-error" class="fetch-error" style="display:none">Error</div>
+            </div>
+
+            <style>
+                .user-list-item {
+                    display: flex;
+                    flex-direction: row;
+                    margin-left: 30px;
+                    margin-right: 20px;
+                    font-weight: 500;
+                    font-size: 16px;
+                    line-height: 20px;
+                    overflow: hidden;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                    border-top: 1px solid var(--background-modifier-accent);
+                    border-bottom: 1px solid transparent;
+                    height: 62px;
+                    flex: 1 0 62px;
+                    opacity: 1;
+                    align-items: center;
+                    justify-content: space-between;
+                    max-width: 100%;
+                    padding: 16px 10px;
+                }
+
+                .user-list-item:hover {
+                    background: var(--background-modifier-hover);
+                    box-shadow: none;
+                    border-radius: 8px;
+                    border-color: transparent;
+                }
+
+                .user-list-item>div:nth-child(1) {
+                    display: flex;
+                    overflow: hidden;
+                }
+
+                .user-list-item>div:nth-child(2) {
+                    display: flex;
+                    margin-left: 8px;
+                }
+
+                .user-list-item>div:nth-child(1)>div:nth-child(1) {
+                    width: 32px;
+                    height: 32px;
+                    margin: 0 12px 0 0;
+                    flex-shrink: 0;
+                    position: relative;
+                    border-radius: 50%;
+                    display: flex;
+                    flex-direction: column;
+                    user-select: none;
+                }
+
+                .user-list-item>div:nth-child(1)>div:nth-child(1)>svg {
+                    position: absolute;
+                    contain: paint;
+                }
+
+                .user-list-item>div:nth-child(1)>div:nth-child(2)>div:nth-child(1) {
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    color: var(--header-primary);
+                    font-weight: 600;
+                }
+
+                .user-list-item>div:nth-child(1)>div:nth-child(2)>div:nth-child(2) {
+                    color: var(--header-secondary);
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                    font-size: 14px;
+                }
+            </style>
+            {{#each users}}
+            <div class="user-list-item" onclick="createDM('{{this.id}}').then(channel => window.location.assign(`/channels/@me/${channel.id}`)).catch(console.error)">
+                <div>
+                    <div>
+                        <svg width="40" height="40" viewBox="0 0 40 40">
+                            <foreignObject x="0" y="0" width="32" height="32" {{#if this.presence.status}}
+                                mask="url(#svg-mask-avatar-status-round-32)" {{else}}
+                                mask="url(#svg-mask-avatar-default)" {{/if}}>
+                                {{#if this.avatarDataURL}}
+                                <img src="{{this.avatarDataURL}}" width="32" height="32">
+                                {{else}}
+                                {{#if this.avatar}}
+                                <img src="/?url=https://cdn.discordapp.com/avatars/{{this.id}}/{{this.avatar}}.webp?size=32"
+                                    width="32" height="32">
+                                {{else}}
+                                <img src="{{this.defaultAvatarURL}}?size=32" width="32" height="32">
+                                {{/if}}
+                                {{/if}}
+                            </foreignObject>
+                            {{#switch this.presence.status}}
+
+                            {{#case 'online'}}
+                            <rect width="10" height="10" x="22" y="22" fill="#23a55a"
+                                mask="url(#svg-mask-status-online)">
+                            </rect>
+                            {{/case}}
+
+                            {{#default}}
+                            <rect width="10" height="10" x="22" y="22" fill="silver"
+                                mask="url(#svg-mask-status-online)">
+                            </rect>
+                            {{/default}}
+
+                            {{/switch}}
+                        </svg>
+                    </div>
+                    <div style="align-self: center;">
+                        <div>
+                            {{this.username}}
+                        </div>
+                        {{#if this.presence.status}}
+                        <div>
+                            {{this.presence.status}}
+                        </div>
+                        {{/if}}
+                    </div>
+                </div>
+                <div>
+
+                </div>
+            </div>
+            {{/each}}
+        </div>
+    </main>
+</div>

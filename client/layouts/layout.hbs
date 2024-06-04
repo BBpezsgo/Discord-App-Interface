@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en" class="theme-dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{{Title}}}</title>
+    
+    <link rel="stylesheet" href="/styles/styles.css">
+    <link rel="stylesheet" href="/styles/theme.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    {{>svgs}}
+    <style>
+        body {
+            font-family: var(--font-primary);
+            text-rendering: optimizeLegibility;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    {{{body}}}
+        
+    <div class="user-popout" id="user-popout" style="display:none" data-user-id="">
+        <svg viewBox="0 0 340 60" style="min-width: 340px; min-height: 60px;">
+            <mask id="uid_362">
+                <rect fill="white" x="0" y="0" width="100%" height="100%"></rect>
+                <circle fill="black" cx="62" cy="56" r="46"></circle>
+            </mask>
+            <foreignObject x="0" y="0" width="100%" height="100%" overflow="visible" mask="url(#uid_362)">
+                <div id="user-popup-banner-color" style="background-color:var(--brand-500)"></div>
+            </foreignObject>
+        </svg>
+
+        <div class="user-popout-avatar-button" role="button" tabindex="0">
+            <div>
+                <div role="img" style="width: 80px; height: 80px;">
+                    <svg width="92" height="92" viewBox="0 0 92 92">
+                        <foreignObject x="0" y="0" width="80" height="80" mask="url(#svg-mask-avatar-default)">
+                            <div>
+                                <img width="80" height="80" id="user-popup-avatar">
+                            </div>
+                        </foreignObject>
+                        <!--
+                        <rect width="16" height="16" x="60" y="60" fill="#23a55a" mask="url(#svg-mask-status-online)"></rect>
+                        -->
+                    </svg>
+                </div>
+            </div>
+            <!--
+            <svg width="80" height="80" viewBox="0 0 80 80">
+                <foreignObject x="0" y="0" width="80" height="80" overflow="visible" mask="url(#svg-mask-avatar-default)">
+                    <div>
+                        View Profile
+                    </div>
+                </foreignObject>
+            </svg>
+            -->
+        </div>
+
+        <div class="user-popout-badges" style="background-color: unset;">
+            <!--
+            <div>
+                <img width="22" height="22" src="https://cdn.discordapp.com/badge-icons/6f9e37f9029ff57aef81db857890005e.png">
+            </div>
+            -->
+        </div>
+
+        <div class="user-popout-content">
+            <div>
+                <h1 id="user-popup-display-name">Yeah</h1>
+                <div>
+                    <span id="user-popup-username">YEAH</span><span id="user-popup-discriminator">#0000</span>
+                </div>
+            </div>
+            <div style="display:none">
+                <hr>
+                <p id="user-popout-bio">
+
+                </p>
+            </div>
+            <div>
+                <hr>
+                <button id="user-popup-fetch-button" class="button button-secondary" onclick="this.disabled = true; getUser(document.getElementById('user-popout').getAttribute('data-user-id'), true).catch(error => { const errorElement = document.getElementById('user-popup-fetch-error'); errorElement.textContent = error + ''; errorElement.style.display = 'block'; }).finally(() => { this.disabled = false })">Fetch</button>
+                <div id="user-popup-fetch-error" class="fetch-error" style="display:none">Error</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/handlebars.min.js"></script>
+    <script src="/scripts/utils.js"></script>
+    <script src="/scripts/ui.js"></script>
+    <script src="/scripts/http.js"></script>
+    <script src="/scripts/handlebars-utils.js"></script>
+    <script src="/scripts/ws.js"></script>
+    
+    <script src="/scripts/script.js"></script>
+    <script src="/scripts/api.js"></script>
+    <script src="/scripts/discord/content-parser.js"></script>
+    <script src="/scripts/readable.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,8 @@
+/node_modules
+/archive
+/cache
+/hars
+/hars-parsed
+
+/.vscode/launch.json
+/server/test.js

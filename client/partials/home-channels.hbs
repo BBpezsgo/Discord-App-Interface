@@ -1,0 +1,241 @@
+<style>
+    #home-channels {
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        flex: 0 0 240px;
+        background-color: var(--bg-overlay-3, var(--background-secondary));
+    }
+
+    #channels-list>svg {
+        fill: var(--background-primary);
+        padding: 16px;
+    }
+
+    #channels-list {
+        flex: 1 1;
+        overflow-y: auto;
+    }
+
+    #channels-top {
+        padding: 0 10px;
+        box-shadow: var(--elevation-low);
+        flex: 0 0 48px;
+    }
+</style>
+<div id="home-channels">
+    <div id="channels-top">
+
+    </div>
+
+    <style>
+        #channels-list {
+            overflow-x: hidden;
+            padding-top: 7px;
+        }
+
+        #channels-list>h2 {
+            box-sizing: border-box;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            text-transform: uppercase;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: .02em;
+            font-family: var(--font-display);
+            font-weight: 600;
+            flex: 1 1 auto;
+            color: var(--channels-default);
+            padding: 18px 8px 4px 18px;
+            height: 40px;
+            user-select: none;
+        }
+
+        #channels-list>div {
+            position: relative;
+            max-width: 224px;
+            margin-left: 8px;
+            padding: 1px 0;
+            border-radius: 4px;
+            transition: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            box-sizing: border-box;
+            width: 100%;
+            color: var(--channels-default);
+        }
+
+        #channels-list>div:hover {
+            color: var(--interactive-hover);
+            background: var(--bg-overlay-hover, var(--background-modifier-hover));
+        }
+
+        #channels-list>div:active {
+            color: var(--interactive-active);
+            background: var(--bg-overlay-active, var(--background-modifier-active));
+        }
+
+        #channels-list>div>a {
+            display: flex;
+            min-width: 0;
+            flex: 1 1 auto;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            align-items: center;
+            color: inherit;
+            gap: 8px;
+        }
+
+        #channels-list>div>a>div {
+            min-width: 0;
+            display: flex;
+            align-items: center;
+            border-radius: 4px;
+            height: 42px;
+            padding: 0 8px;
+        }
+
+        #channels-list>div>a>div>div:nth-child(1) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+            width: 40px;
+            height: 40px;
+            margin-right: 12px;
+            border-radius: 50%;
+            position: relative;
+            top: 3px;
+        }
+
+        #channels-list>div>a>div>div:nth-child(2) {
+            min-width: 0;
+            flex: 1 1 auto;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            font-size: 16px;
+            line-height: 20px;
+            font-weight: 500;
+        }
+
+        #channels-list>div:hover>svg {
+            visibility: visible;
+        }
+
+        #channels-list>div>svg {
+            opacity: .7;
+            margin: 2px;
+            padding-right: 8px;
+            display: block;
+            width: 16px;
+            height: 16px;
+            visibility: hidden;
+            flex: 0 0 auto;
+        }
+
+        #channels-list>div>svg:disabled,
+        #channels-list>div>svg.disabled {
+            opacity: .5;
+            pointer-events: none;
+        }
+    </style>
+    <div id="channels-list">
+        <div>
+            <a href="/channels/@me">
+                <div>
+                    <div style="top: unset;">
+                        <svg style="width: 24px; height: 24px;" role="img" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M13 10a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path><path fill="currentColor" d="M3 5v-.75C3 3.56 3.56 3 4.25 3s1.24.56 1.33 1.25C6.12 8.65 9.46 12 13 12h1a8 8 0 0 1 8 8 2 2 0 0 1-2 2 .21.21 0 0 1-.2-.15 7.65 7.65 0 0 0-1.32-2.3c-.15-.2-.42-.06-.39.17l.25 2c.02.15-.1.28-.25.28H9a2 2 0 0 1-2-2v-2.22c0-1.57-.67-3.05-1.53-4.37A15.85 15.85 0 0 1 3 5Z"></path></svg>
+                    </div>
+                    <div>
+                        Users
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <h2>Direct Messages</h2>
+
+        {{#each users}}
+        {{#if this.dmChannel}}
+        <div id="channel-{{this.id}}">
+            <a href="/channels/@me/{{this.dmChannel}}">
+                <div>
+                    <div>
+                        <svg width="40" height="40" viewBox="0 0 40 40">
+                            <foreignObject x="0" y="0" width="32" height="32"
+                                mask="url(#svg-mask-avatar-default)">
+                                    {{#if this.avatarDataURL}}
+                                    <img src="{{this.avatarDataURL}}" width="32" height="32">
+                                    {{else}}
+                                    {{#if this.avatar}}
+                                    <img src="/?url=https://cdn.discordapp.com/avatars/{{this.id}}/{{this.avatar}}.webp?size=32" width="32" height="32">
+                                    {{else}}
+                                    <img src="{{this.defaultAvatarURL}}?size=32" width="32" height="32">
+                                    {{/if}}
+                                    {{/if}}
+                            </foreignObject>
+                            <!--
+                            <rect width="10" height="10" x="22" y="22" fill="#80848e"
+                                mask="url(#svg-mask-status-offline)"></rect>
+                            -->
+                        </svg>
+                    </div>
+                    <div>
+                        {{this.username}}
+                    </div>
+                </div>
+            </a>
+            <svg role="img" width="24" height="24" viewBox="0 0 24 24" onclick="
+                this.disabled = true
+                this.classList.add('disabled')
+                closeDM('{{this.id}}')
+                    .then(() => {
+                        if (window.location.pathname.startsWith(`/channels/@me/{{this.dmChannel}}`)) {
+                            window.location.assign('/channels/@me')
+                        } else {
+                            document.getElementById('channel-{{this.id}}').remove()
+                        }
+                    })
+                    .catch(console.error)
+                    .finally(() => {
+                        this.classList.remove('disabled')
+                        this.disabled = false
+                    })
+            ">
+                <path fill="currentColor" d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z">
+                </path>
+            </svg>
+        </div>
+        {{/if}}
+        {{/each}}
+
+        <svg width="184" height="428" viewBox="0 0 184 428">
+            <rect x="40" y="6" width="144" height="20" rx="10"></rect>
+            <circle cx="16" cy="16" r="16"></circle>
+            <rect x="40" y="50" width="144" height="20" rx="10" opacity="0.9"></rect>
+            <circle cx="16" cy="60" r="16" opacity="0.9"></circle>
+            <rect x="40" y="94" width="144" height="20" rx="10" opacity="0.8"></rect>
+            <circle cx="16" cy="104" r="16" opacity="0.8"></circle>
+            <rect x="40" y="138" width="144" height="20" rx="10" opacity="0.7"></rect>
+            <circle cx="16" cy="148" r="16" opacity="0.7"></circle>
+            <rect x="40" y="182" width="144" height="20" rx="10" opacity="0.6"></rect>
+            <circle cx="16" cy="192" r="16" opacity="0.6"></circle>
+            <rect x="40" y="226" width="144" height="20" rx="10" opacity="0.5"></rect>
+            <circle cx="16" cy="236" r="16" opacity="0.5"></circle>
+            <rect x="40" y="270" width="144" height="20" rx="10" opacity="0.4"></rect>
+            <circle cx="16" cy="280" r="16" opacity="0.4"></circle>
+            <rect x="40" y="314" width="144" height="20" rx="10" opacity="0.3"></rect>
+            <circle cx="16" cy="324" r="16" opacity="0.3"></circle>
+            <rect x="40" y="358" width="144" height="20" rx="10" opacity="0.2"></rect>
+            <circle cx="16" cy="368" r="16" opacity="0.2"></circle>
+            <rect x="40" y="402" width="144" height="20" rx="10" opacity="0.1"></rect>
+            <circle cx="16" cy="412" r="16" opacity="0.1"></circle>
+        </svg>
+    </div>
+
+    {{>channels-status}}
+</div>

@@ -1,0 +1,131 @@
+<style>
+    #home-guilds {
+        flex: 0 0 72px;
+        background-color: var(--background-tertiary);
+        padding: 12px 0 0;
+        user-select: none;
+        overflow-y: auto;
+    }
+
+    #home-guilds>div {
+        margin: 0 0 8px;
+        justify-content: center;
+        display: flex;
+    }
+
+    #home-guilds>div>a {
+        position: relative;
+        left: -4px;
+        box-sizing: border-box;
+        position: relative;
+        width: 48px;
+        height: 48px;
+        cursor: pointer;
+        border-radius: 50%;
+        overflow: hidden;
+        transition: border-radius ease-in-out 100ms;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+    }
+
+    #home-guilds>div.no-icon>a,
+    #home-guilds>div:nth-child(1)>a {
+        background: var(--brand-500);
+    }
+
+    #home-guilds>div>a:hover,
+    #home-guilds>div.selected>a {
+        border-radius: 33%;
+    }
+
+    #home-guilds>div>a:active {
+        transform: translateY(1px);
+    }
+
+    .guild-separator {
+        position: relative;
+        margin: 0 0 8px;
+        display: flex;
+        justify-content: center;
+        width: var(--custom-list-items-list-item-width);
+    }
+
+    .guild-separator>div {
+        height: 2px;
+        width: 32px;
+        border-radius: 1px;
+        background-color: var(--background-modifier-accent);
+    }
+
+    #home-guilds>div>.guild-pill {
+        position: relative;
+        left: -8px;
+        overflow: hidden;
+        width: 8px;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        contain: layout size;
+        opacity: 0;
+        transition: opacity 200ms;
+    }
+
+    #home-guilds>div>.guild-pill>span {
+        display: block;
+        width: 8px;
+        height: 0px;
+        border-radius: 0 4px 4px 0;
+        margin-left: -4px;
+        background-color: var(--header-primary);
+        transition: height 200ms;
+    }
+
+    #home-guilds>div.selected>.guild-pill {
+        opacity: 1;
+    }
+
+    #home-guilds>div.selected>.guild-pill>span {
+        height: 40px !important;
+    }
+
+    #home-guilds>div:hover>.guild-pill {
+        opacity: 1;
+    }
+
+    #home-guilds>div:hover>.guild-pill>span {
+        height: 20px;
+    }
+</style>
+
+<nav id="home-guilds">
+    <div {{#if guild}} {{else}} class="selected" {{/if}}>
+        <div class="guild-pill"><span></span></div>
+        <a style="color: var(--white-500);" href="/channels/@me">
+            <svg aria-hidden="true" role="img" xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="none"
+                viewBox="0 0 24 24">
+                <path fill="currentColor"
+                    d="M19.73 4.87a18.2 18.2 0 0 0-4.6-1.44c-.21.4-.4.8-.58 1.21-1.69-.25-3.4-.25-5.1 0-.18-.41-.37-.82-.59-1.2-1.6.27-3.14.75-4.6 1.43A19.04 19.04 0 0 0 .96 17.7a18.43 18.43 0 0 0 5.63 2.87c.46-.62.86-1.28 1.2-1.98-.65-.25-1.29-.55-1.9-.92.17-.12.32-.24.47-.37 3.58 1.7 7.7 1.7 11.28 0l.46.37c-.6.36-1.25.67-1.9.92.35.7.75 1.35 1.2 1.98 2.03-.63 3.94-1.6 5.64-2.87.47-4.87-.78-9.09-3.3-12.83ZM8.3 15.12c-1.1 0-2-1.02-2-2.27 0-1.24.88-2.26 2-2.26s2.02 1.02 2 2.26c0 1.25-.89 2.27-2 2.27Zm7.4 0c-1.1 0-2-1.02-2-2.27 0-1.24.88-2.26 2-2.26s2.02 1.02 2 2.26c0 1.25-.88 2.27-2 2.27Z">
+                </path>
+            </svg>
+        </a>
+    </div>
+    <div class="guild-separator">
+        <div></div>
+    </div>
+    {{#each guilds}}
+    <div class="{{#equal this.id ../guild.id}} selected{{/equal}}{{#if this.iconDataURL}}{{else}}{{#if this.icon}}{{else}} no-icon{{/if}}{{/if}}">
+        <div class="guild-pill"><span></span></div>
+        <a title="{{this.name}}" href="/channels/{{this.id}}">
+            {{#if this.iconDataURL}}
+            <img src="{{this.iconDataURL}}" width="48" width="48">
+            {{else}}
+            {{#if this.icon}}
+            <img src="/?url=https://cdn.discordapp.com/icons/{{this.id}}/{{this.icon}}.webp?size=48" width="48" width="48">
+            {{/if}}
+            {{/if}}
+        </a>
+    </div>
+    {{/each}}
+</nav>

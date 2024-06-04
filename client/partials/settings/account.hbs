@@ -1,0 +1,154 @@
+<div>
+    <div>
+        <h2>My Account</h2>
+        <style>
+            #my-account-card {
+                background-color: var(--background-tertiary);
+                border-radius: var(--radius-sm);
+                position: relative;
+                overflow: hidden;
+            }
+
+            #my-account-card>svg div {
+                height: var(--custom-user-banner-premium-banner-height-settings);
+                min-height: var(--custom-user-banner-premium-banner-height-settings);
+            }
+
+            #my-account-card>div:nth-child(2) {
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                padding: 16px 16px 0 120px;
+            }
+
+            #my-account-card>div:nth-child(2)>svg {
+                background-color: var(--background-tertiary);
+                position: absolute;
+                top: 82px;
+                left: 22px;
+                box-sizing: content-box;
+                border-radius: 50%;
+                outline: 4px solid var(--background-tertiary);
+                z-index: 0;
+                user-select: none;
+            }
+
+            #my-account-card>div:nth-child(2)>svg img {
+                position: relative;
+                left: 4px;
+            }
+
+            #my-account-card>div:nth-child(2)>div {
+                margin-bottom: 6px;
+                font-family: var(--font-display);
+                color: var(--header-primary);
+                font-size: 20px;
+                line-height: 24px;
+                font-weight: 600;
+                z-index: 1;
+            }
+
+            #badge-list {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                box-sizing: border-box;
+                width: fit-content;
+                gap: 4px;
+                padding: 2px 4px;
+                background: var(--bg-mod-faint);
+                border-radius: var(--radius-xs);
+                border: 1px solid var(--border-faint);
+                height: 28px;
+                background-color: var(--background-secondary);
+                border-radius: var(--radius-sm);
+                border: none;
+                max-width: 228px;
+                z-index: 1;
+            }
+
+            #my-account-card>div:nth-child(3) {
+                border-radius: var(--radius-sm);
+                background-color: var(--background-secondary);
+                padding: 16px;
+                margin: 8px 16px 16px;
+                z-index: 1;
+            }
+
+            #my-account-card>div:nth-child(3)>div {
+                margin-right: 16px;
+            }
+
+            #my-account-card>div:nth-child(3)>div h3 {
+                margin-bottom: 4px;
+                color: var(--header-secondary);
+                font-family: var(--font-display);
+                font-size: 12px;
+                line-height: 1.3333333333333333;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: .02em;
+            }
+
+            #my-account-card>div:nth-child(3)>div p {
+                color: var(--header-primary);
+                text-overflow: ellipsis;
+                font-family: var(--font-primary);
+                font-size: 16px;
+                line-height: 1.25;
+                font-weight: 400;
+            }
+
+            #my-account-card>div:nth-child(3)>div:not(:first-child) {
+                margin-top: 20px;
+            }
+        </style>
+        <div id="my-account-card">
+            <div style="min-width: 660px; min-height: 100px; background-color: rgb(93, 100, 244);">
+            </div>
+            <div>
+                <svg width="92" height="92" viewBox="0 0 92 92">
+                    <foreignObject x="0" y="0" width="80" height="80" mask="url(#svg-mask-avatar-status-round-80)">
+                        <img width="80" height="80" src="{{displayAvatarURL}}?size=80">
+                    </foreignObject>
+                    <rect width="16" height="16" x="60" y="60" fill="#80848e" mask="url(#svg-mask-status-offline)">
+                    </rect>
+                </svg>
+                <div>
+                    <div style="display: flex;">
+                        <span>{{username}}#{{discriminator}}</span>
+                    </div>
+                    <div id="badge-list">
+                        <img width="22" height="22" src="https://cdn.discordapp.com/badge-icons/6f9e37f9029ff57aef81db857890005e.png">
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <h3>Display Name</h3>
+                    <p>{{displayName}}</p>
+                </div>
+                <div>
+                    <h3>Id</h3>
+                    <p>{{id}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <h2>Password and Authentication</h2>
+        {{#if mfaEnabled}}
+            <h3 style="color: var(--text-positive);">
+                <img src="/icons/lock-green.svg" style="margin-right:4px;width:10px;height:14px;position:relative;top:2px;">
+                Multi-Factor Authentication enabled
+            </h3>
+        {{else}}
+            <h3 style="color: var(--text-danger);">
+                <img src="/icons/lock-red.svg" style="margin-right:4px;width:10px;height:14px;position:relative;top:2px;">
+                Multi-Factor Authentication disabled
+            </h3>
+        {{/if}}
+    </div>
+
+</div>
