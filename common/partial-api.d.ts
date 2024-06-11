@@ -14,6 +14,14 @@ export type Guild = {
     verificationLevel?: number | null
     premiumSubscriptionCount?: number | null
     vanityUrlCode?: string | null
+    afkChannelId?: string | null
+    afkTimeout?: number | null
+    available?: boolean | null
+    createdTimestamp?: number | null
+    joinedTimestamp?: number | null
+    large?: boolean | null
+    mfaLevel?: number | null
+    nameAcronym?: string | null
 }
 
 export type Channel = {
@@ -21,7 +29,6 @@ export type Channel = {
 
     name?: string | null
     guildId?: string | null
-    lastMessageId?: string | null
     rateLimitPerUser?: number | null
     type?: number | null
     parentId?: string | null
@@ -30,6 +37,7 @@ export type Channel = {
     positionRaw?: number | null
     position?: number | null
     messages?: { [key: string]: Message } | null
+    members?: User[]
 }
 
 export type User = {
@@ -50,6 +58,8 @@ export type User = {
     legacyUsername?: string | null
     defaultAvatarURL?: string | null
     dmChannel?: string | null
+    bot?: boolean | null
+    system?: boolean | null
 }
 
 export type Message = {
@@ -65,6 +75,26 @@ export type Message = {
     tts?: boolean | null
     type?: number | null
     embeds?: Array<Embed> | null
+    attachments?: Array<MessageAttachment> | null
+    deletable?: boolean | null
+    bulkDeletable?: boolean | null
+    editable?: boolean | null
+    pinnable?: boolean | null
+    reactions?: Array<MessageReaction> | null
+    system?: boolean | null
+    url?: string | null
+}
+
+export type MessageAttachment = {
+    
+}
+
+export type MessageReaction = {
+    count?: number | null
+    name?: string | null
+    imageURL?: string | null
+    me?: boolean | null
+    users?: Array<User> | null
 }
 
 export type Embed = {

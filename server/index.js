@@ -6,6 +6,7 @@ const discordjs = require('discord.js')
 const fs = require('fs')
 const har = require('./har')
 const _archive = require('./archive-browser')
+const discordjsTransformers = require('./discord-transformers')
 
 /** @type {Handlebars.HelperDeclareSpec} */
 const handlebarsHelpers = {
@@ -56,10 +57,10 @@ const handlebarsHelpers = {
 
 /**
  * @typedef {{
- *   client: unknown
+ *   client: any
  *   guilds: Array<import('../common/partial-api').Guild>
  *   users: Array<import('../common/partial-api').User>
- *   user: unknown
+ *   user: any
  * }} ContextBase
  */
 
@@ -84,7 +85,27 @@ const handlebarsHelpers = {
  * }} ContextChannel
  */
 
-module.exports = function (/** @type {Provider} */ provider) {
+/**
+ * @typedef {{
+ *   username: string
+ *   password: string
+ * }} BasicAuth
+ */
+
+/**
+ * @template T
+ * @param {T} object
+ * @returns {T}
+ */
+function toJSON(object) {
+    return JSON.parse(JSON.stringify(object, (key, value) =>
+        typeof value === 'bigint'
+            ? value.toString()
+            : value
+    ))
+}
+
+module.exports = function (/** @type {Provider} */ provider, /** @type {BasicAuth | null} */ basicAuth = null) {
     const client = (provider instanceof discordjs.Client) ? provider : provider.discordClient ?? new discordjs.Client({ intents: 0 })
     const hars = (!(provider instanceof discordjs.Client) && provider.harPath) ? har.load(provider.harPath) : null
     const archive = (!(provider instanceof discordjs.Client) && provider.archivePath && fs.existsSync(provider.archivePath) && fs.statSync(provider.archivePath).isDirectory()) ? _archive(provider.archivePath) : null
@@ -196,18 +217,18 @@ module.exports = function (/** @type {Provider} */ provider) {
             const guild = client.guilds.cache.at(i)
             if (!guild) { continue }
             
-            let otherIndex = result.findIndex(v => v.id == guild.id)
+            const otherIndex = result.findIndex(v => v.id == guild.id)
             if (otherIndex !== -1) {
                 let other = result[otherIndex]
                 other = {
                     ...other,
-                    ...guild,
+                    ...discordjsTransformers.transformGuild(guild),
                     channels: undefined,
                 }
                 result[otherIndex] = other
             } else {
                 result.push({
-                    ...guild,
+                    ...discordjsTransformers.transformGuild(guild),
                     channels: undefined,
                 })
             }
@@ -266,7 +287,7 @@ module.exports = function (/** @type {Provider} */ provider) {
             result ??= { id: guildId, channels: [ ] }
             result = {
                 ...result,
-                ..._guild1,
+                ...discordjsTransformers.transformGuild(_guild1),
                 channels: result.channels,
             }
 
@@ -275,7 +296,7 @@ module.exports = function (/** @type {Provider} */ provider) {
                 if (!channel) { continue }
                 if (result.channels.find(v => v.id == channel.id)) { continue }
                 result.channels.push({
-                    ...channel,
+                    ...discordjsTransformers.transformChannel(channel),
                     messages: null,
                 })
             }
@@ -357,8 +378,17 @@ module.exports = function (/** @type {Provider} */ provider) {
             result ??= { id: channelId }
             result = {
                 ...result,
-                ..._channel1,
+                ...discordjsTransformers.transformChannel(_channel1),
                 messages: result.messages,
+            }
+
+            if ('members' in _channel1 && !_channel1.isThread()
+            ) {
+                result.members = _channel1.members.toJSON().map(v => ({
+                    ...v,
+                    id: v.id,
+                    flags: v.flags.bitfield,
+                }))
             }
             
             if ('messages' in _channel1) {
@@ -366,15 +396,7 @@ module.exports = function (/** @type {Provider} */ provider) {
                 for (let i = 0; i < _channel1.messages.cache.size; i++) {
                     const message = _channel1.messages.cache.at(i)
                     if (!message) { continue }
-                    result.messages.push({
-                        ...message,
-                        id: message.id,
-                        flags: message.flags.bitfield,
-                        author: message.author ? {
-                            ...message.author,
-                            flags: message.author.flags?.bitfield,
-                        } : null
-                    })
+                    result.messages.push(discordjsTransformers.transformMessage(message))
                 }
             }
         }
@@ -418,7 +440,7 @@ module.exports = function (/** @type {Provider} */ provider) {
             result ??= { id: channelId }
             result = {
                 ...result,
-                ..._channel1,
+                ...discordjsTransformers.transformChannel(_channel1),
                 messages: null,
             }
         }
@@ -468,17 +490,11 @@ module.exports = function (/** @type {Provider} */ provider) {
             if (!user) { continue }
             let other = result.findIndex(v => v.id === user.id)
             if (other === -1) {
-                result.push({
-                    ...user,
-                    flags: user.flags?.bitfield,
-                    dmChannel: user.dmChannel?.id,
-                })
+                result.push(discordjsTransformers.transformUser(user))
             } else {
                 result[other] = {
                     ...result[other],
-                    ...user,
-                    flags: user.flags?.bitfield,
-                    dmChannel: user.dmChannel?.id,
+                    ...discordjsTransformers.transformUser(user),
                 }
             }
         }
@@ -511,17 +527,25 @@ module.exports = function (/** @type {Provider} */ provider) {
             }
         }
 
-        const _user1 = client.channels.resolve(userId)
+        const _user1 = client.users.resolve(userId)
         if (_user1) {
             result ??= { id: userId }
             result = {
                 ...result,
-                ..._user1,
-                flags: _user1.flags?.bitfield,
+                ...discordjsTransformers.transformUser(_user1),
             }
         }
 
         return result
+    }
+
+    function getClient() {
+        /** @type {any} */
+        const result = client.toJSON()
+        result.isReady = client.isReady()
+        client.ws.status === discordjs.Status.Connecting
+        result.rest.handlers = undefined
+        return toJSON(result)
     }
 
     /**
@@ -575,6 +599,23 @@ module.exports = function (/** @type {Provider} */ provider) {
         return result
     }
 
+    /**
+     * @param {import('express-serve-static-core').Response<any, Record<string, any>, number>} res
+     * @param {any} error
+     */
+    function sendErrorResponse(res, error) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                error: {
+                    name: error.name,
+                    message: error.message,
+                }
+            }).end()
+            return
+        }
+        console.log(error)
+        res.status(500).end()
+    }
 
     /**
      * @param {import('express-serve-static-core').Request<{ channel: string; }, any, any, qs.ParsedQs, Record<string, any>>} req
@@ -610,6 +651,23 @@ module.exports = function (/** @type {Provider} */ provider) {
     app.use(express.static(path.join(__dirname, '..', 'client', 'static'), { maxAge: staticMaxAge }))
     app.use(express.static(path.join(__dirname, '..', 'client', 'partials'), { maxAge: staticMaxAge }))
     app.use(express.static(path.join(path.dirname(require.resolve('handlebars')), '..', 'dist'), { maxAge: staticMaxAge, }))
+
+    if (basicAuth) {
+        app.use((req, res, next) => {
+            const b64auth = (req.headers.authorization || '').split(' ')[1] || ''
+            const [ username, password ] = Buffer.from(b64auth, 'base64').toString().split(':')
+    
+            if (username &&
+                password &&
+                username === basicAuth.username &&
+                password === basicAuth.password) {
+                return next()
+            }
+    
+            res.set('WWW-Authenticate', 'Basic realm="401"')
+            res.status(401).render('view/401')
+        })
+    }
 
     app.get('/', (req, res) => {
         if (req.query.url) {
@@ -673,7 +731,7 @@ module.exports = function (/** @type {Provider} */ provider) {
 
     app.get('/settings', (req, res) => {
         const context = {
-            client: client.toJSON(),
+            client: getClient(),
         }
 
         console.log(context)
@@ -687,7 +745,7 @@ module.exports = function (/** @type {Provider} */ provider) {
         if (guildId === '@me') {
             /** @type {ContextBase} */
             const context = {
-                client: client.toJSON(),
+                client: getClient(),
                 guilds: getGuilds(),
                 users: getUsers(),
                 user: client.user?.toJSON(),
@@ -707,7 +765,7 @@ module.exports = function (/** @type {Provider} */ provider) {
 
         /** @type {ContextGuild} */
         const context = {
-            client: client.toJSON(),
+            client: getClient(),
             guilds: getGuilds(),
             users: getUsers(),
             user: client.user?.toJSON(),
@@ -727,7 +785,7 @@ module.exports = function (/** @type {Provider} */ provider) {
             /** @type {ContextChannel} */
             // @ts-ignore
             const context = {
-                client: client.toJSON(),
+                client: getClient(),
                 guilds: getGuilds(),
                 users: getUsers(),
                 user: client.user?.toJSON(),
@@ -751,7 +809,7 @@ module.exports = function (/** @type {Provider} */ provider) {
 
         /** @type {ContextChannel} */
         const context = {
-            client: client.toJSON(),
+            client: getClient(),
             guilds: getGuilds(),
             users: getUsers(),
             user: client.user?.toJSON(),
@@ -773,9 +831,8 @@ module.exports = function (/** @type {Provider} */ provider) {
         if ('messages' in channel) {
             channel.messages.fetch(req.query)
                 .then(result => {
-                    const messages = result.toJSON().map(message => {
-                        return message.toJSON()
-                    })
+                    /** @type {Array<import('../common/partial-api').Message>} */
+                    const messages = result.toJSON().map(discordjsTransformers.transformMessage)
                     console.log(messages)
                     res.status(200).set('Max-Age', dynamicMaxAge.toString()).json(messages).end()
                 })
@@ -797,7 +854,7 @@ module.exports = function (/** @type {Provider} */ provider) {
                     flags: fetched.flags?.bitfield,
                 }
             } catch (error) {
-                res.status(500).json(error).end()
+                sendErrorResponse(res, error)
                 return
             }
         }
@@ -820,6 +877,7 @@ module.exports = function (/** @type {Provider} */ provider) {
                     result = {
                         ...fetched,
                         messages: undefined,
+                        members: undefined,
                     }
                 }
             } catch (error) {
@@ -872,38 +930,39 @@ module.exports = function (/** @type {Provider} */ provider) {
 
     app.get('/api/client.json', (req, res) => {
         let json = {
+            isReady: client.isReady(),
             readyAt: client.readyAt,
             readyTimestamp: client.readyTimestamp,
             uptime: client.uptime,
-            rest: {
-                globalRemaining: client.rest?.globalRemaining,
-                globalReset: client.rest?.globalReset,
-                options: client.rest?.options,
-            },
-            shard: {
-                count: client.shard?.count,
-                ids: client.shard?.ids,
-                mode: client.shard?.mode,
-                parentPort: client.shard?.parentPort,
-            },
-            ws: {
-                status: client.ws?.status,
-                gateway: client.ws?.gateway,
-                ping: client.ws?.ping,
-                shards: client.ws?.shards.toJSON().map(v => ({
+            rest: client.rest ? {
+                globalRemaining: client.rest.globalRemaining,
+                globalReset: client.rest.globalReset,
+                options: client.rest.options,
+            } : null,
+            shard: client.shard ? {
+                count: client.shard.count,
+                ids: client.shard.ids,
+                mode: client.shard.mode,
+                parentPort: client.shard.parentPort,
+            } : null,
+            ws: client.ws ? {
+                status: client.ws.status,
+                gateway: client.ws.gateway,
+                ping: client.ws.ping,
+                shards: client.ws.shards.toJSON().map(v => ({
                     id: v.id,
                     lastPingTimestamp: v.lastPingTimestamp,
                     ping: v.ping,
                     status: v.status,
                 })),
-            },
+            } : null,
         }
         if (req.query.path) { json = extractPaths(json, req.query.path + '') }
         res.status(200).set('Max-Age', dynamicMaxAge.toString()).json(json).end()
     })
 
     app.get('/api/user.json', (req, res) => {
-        let json = {
+        let json = client.user ? {
             id: client.user.id,
             accentColor: client.user.accentColor,
             avatar: client.user.avatar,
@@ -927,13 +986,14 @@ module.exports = function (/** @type {Provider} */ provider) {
             displayAvatarURL: client.user.displayAvatarURL(),
             avatarURL: client.user.avatarURL(),
             avatarDecorationURL: client.user.avatarDecorationURL(),
-        }
+        } : {}
+        json.client = getClient()
         if (req.query.path) { json = extractPaths(json, req.query.path + '') }
         res.status(200).set('Max-Age', dynamicMaxAge.toString()).json(json).end()
     })
 
     app.get('/api/application.json', (req, res) => {
-        let json = {
+        let json = client.application ? {
             id: client.application.id,
             approximateGuildCount: client.application.approximateGuildCount,
             botPublic: client.application.botPublic,
@@ -955,7 +1015,7 @@ module.exports = function (/** @type {Provider} */ provider) {
             roleConnectionsVerificationURL: client.application.roleConnectionsVerificationURL,
             rpcOrigins: client.application.rpcOrigins,
             tags: client.application.tags,
-        }
+        } : { }
         if (req.query.path) { json = extractPaths(json, req.query.path + '') }
         res.status(200).set('Max-Age', dynamicMaxAge.toString()).json(json).end()
     })
@@ -992,6 +1052,93 @@ module.exports = function (/** @type {Provider} */ provider) {
                 channel.send(body)
                     .then((/** @type {discordjs.Message} */ message) => res.status(200).json(message.toJSON()).end())
                     .catch(reason => res.status(500).json(reason).end())
+            })
+            .catch(console.error)
+    })
+
+    app.post('/api/channels/:guild/:channel/send', (req, res) => {
+        const channel = client.channels.cache.get(req.params.channel)
+        if (!channel) {
+            res.status(404)
+            res.end()
+            return
+        }
+
+        if (!channel.isTextBased()) {
+            res.status(400)
+            res.end()
+            return
+        }
+
+        read(req)
+            .then(buffer => {
+                const body = JSON.parse(buffer.toString('utf8'))
+                channel.send(body)
+                    .then((/** @type {discordjs.Message} */ message) => res.status(200).json(message.toJSON()).end())
+                    .catch(reason => res.status(500).json(reason).end())
+            })
+            .catch(console.error)
+    })
+
+    app.post('/api/channels/:guild/:channel/:message/react', (req, res) => {
+        const channel = client.channels.cache.get(req.params.channel)
+        if (!channel) {
+            res.status(404)
+            res.end()
+            return
+        }
+
+        if (!channel.isTextBased()) {
+            res.status(400)
+            res.end()
+            return
+        }
+
+
+        read(req)
+            .then(buffer => {
+                const body = JSON.parse(buffer.toString('utf8'))
+                channel.messages.react(req.params.message, body)
+                    .then(() => res.status(200).end())
+                    .catch(reason => res.status(500).json(reason).end())
+            })
+            .catch(console.error)
+    })
+
+    app.post('/api/channels/:guild/:channel/:message/removeReact', async (req, res) => {
+        const channel = client.channels.cache.get(req.params.channel)
+        if (!channel) {
+            res.status(404)
+            res.end()
+            return
+        }
+
+        if (!channel.isTextBased()) {
+            res.status(400)
+            res.end()
+            return
+        }
+
+        const message = await channel.messages.fetch(req.params.message)
+
+        if (!message) {
+            res.status(404)
+            res.end()
+            return
+        }
+
+        read(req)
+            .then(async buffer => {
+                /** @type {import('../common/api').RemoveReactionParams} */
+                const body = JSON.parse(buffer.toString('utf8'))
+                body.userId ??= client.user.id
+                for (let i = 0; i < message.reactions.cache.size; i++) {
+                    const reaction = message.reactions.cache.at(i)
+                    if (reaction.emoji.name !== body.emoji) { continue }
+                    await reaction.users.remove(body.userId)
+                }
+                res.status(200)
+                res.end()
             })
             .catch(console.error)
     })

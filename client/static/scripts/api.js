@@ -20,8 +20,8 @@ class ApiError extends Error {
      */
     constructor(details) {
         let builder = ''
-        if ('rawError' in details) {
-            builder = details.rawError.message + ''
+        if ('error' in details) {
+            builder = details.error.message + ''
         } else {
             builder = details.code + ''
         }
@@ -69,7 +69,7 @@ function getUser(userId, force = false) {
                     try {
                         res.json()
                             .then(details => {
-                                if ('rawError' in details) {
+                                if ('error' in details) {
                                     reject(new ApiError(details))
                                     return
                                 }
@@ -190,6 +190,7 @@ async function post(url, body = null) {
         method: 'POST',
         body: body,
     })
+    if (res.headers.get('Content-Length') === '0') { return null }
     const text = await res.text()
     if (!text) { return null }
     if (res.status >= 200 && res.status < 300) {
@@ -212,7 +213,34 @@ async function closeDM(id) { return await post(`/api/channels/@me/${id}/close`) 
 async function createDM(id) { return await post(`/api/channels/@me/${id}/create`) }
 
 /**
+ * @param {string} guildId
  * @param {string} channelId
  * @param {string | import('../../../node_modules/discord.js/typings/index').MessagePayload | import('../../../node_modules/discord.js/typings/index').MessageCreateOptions} message
  */
-async function sendMessage(channelId, message) { return await post(`/api/channels/@me/${channelId}/send`, JSON.stringify(message)) }
+async function sendMessage(guildId, channelId, message) {
+    const result = await post(`/api/channels/${guildId}/${channelId}/send`, JSON.stringify(message))
+
+    await addMessage(result)
+
+    return result
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} channelId
+ * @param {string} messageId
+ * @param {import('../../../node_modules/discord.js/typings/index').EmojiIdentifierResolvable} reaction
+ */
+async function addReaction(guildId, channelId, messageId, reaction) {
+    await post(`/api/channels/${guildId}/${channelId}/${messageId}/react`, JSON.stringify(reaction))
+}
+
+/**
+ * @param {string} guildId
+ * @param {string} channelId
+ * @param {string} messageId
+ * @param {import('../../../common/api').RemoveReactionParams} reaction
+ */
+async function removeReaction(guildId, channelId, messageId, reaction) {
+    await post(`/api/channels/${guildId}/${channelId}/${messageId}/removeReact`, JSON.stringify(reaction))
+}

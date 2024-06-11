@@ -23,10 +23,10 @@
         {{#each this.fields}}
         <div class="embed-field"{{#if this.inline}} style="display:inline-block"{{/if}}>
             <div data-parse="message-content" class="embed-field-name">
-                {{content}}
+                {{this.name}}
             </div>
             <div data-parse="message-content" class="embed-field-value">
-                {{content}}
+                {{this.value}}
             </div>
         </div>
         {{/each}}

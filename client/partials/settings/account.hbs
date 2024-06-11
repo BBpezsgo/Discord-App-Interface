@@ -111,8 +111,11 @@
                     <foreignObject x="0" y="0" width="80" height="80" mask="url(#svg-mask-avatar-status-round-80)">
                         <img width="80" height="80" src="{{displayAvatarURL}}?size=80">
                     </foreignObject>
-                    <rect width="16" height="16" x="60" y="60" fill="#80848e" mask="url(#svg-mask-status-offline)">
-                    </rect>
+                    {{#if client.isReady}}
+                    <rect width="16" height="16" x="60" y="60" fill="#23a55a" mask="url(#svg-mask-status-online)"></rect>
+                    {{else}}
+                    <rect width="16" height="16" x="60" y="60" fill="#80848e" mask="url(#svg-mask-status-offline)"></rect>
+                    {{/if}}
                 </svg>
                 <div>
                     <div style="display: flex;">

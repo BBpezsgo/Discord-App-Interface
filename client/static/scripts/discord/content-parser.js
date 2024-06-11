@@ -25,8 +25,6 @@
  * @typedef {{
  *  type: T
  *  data: string
- *  details?: any
- *  attachmentID?: number
  * }} ParserElement
  */
 
@@ -48,8 +46,6 @@ function parseMessageContent(text) {
             if (element.type === 'TEXT') nonparsed({
                 type: 'TEXT',
                 data: element.data,
-                details: element.details,
-                attachmentID: element.attachmentID,
             })
             else parsed(element)
         }
@@ -115,17 +111,17 @@ function parseMessageContent(text) {
     }
 
     ParseThing(
-        /<@![0-9]{18}>/g,
+        /<@![0-9]{18,19}>/g,
         'USER',
         3, 1)
     
     ParseThing(
-        /<#[0-9]{18}>/g,
+        /<#[0-9]{18,19}>/g,
         'CHANNEL',
         2, 1)
     
     ParseThing(
-        /<@&[0-9]{18}>/g,
+        /<@&[0-9]{18,19}>/g,
         'ROLE',
         3, 1)
     
@@ -146,7 +142,7 @@ function parseMessageContent(text) {
         'PING')
     
     ParseThing(
-        /\<@([0-9]{18})\>/g,
+        /\<@([0-9]{18,19})\>/g,
         'PING_RAW',
         2, 1)
     

@@ -175,7 +175,7 @@
                         -->
                     </div>
                     
-                    <button class="button button-primary" onclick="getUser(document.getElementById('input-fetch-user').value, true).then(console.log).catch(error => { const errorElement = document.getElementById('user-fetch-error'); errorElement.textContent = error + ''; errorElement.style.display = 'block'; })">
+                    <button class="button button-primary" onclick="document.getElementById('user-fetch-error').textContent = ''; getUser(document.getElementById('input-fetch-user').value, true).then(console.log).catch(error => { const errorElement = document.getElementById('user-fetch-error'); errorElement.textContent = error + ''; errorElement.style.display = 'block'; })">
                         Fetch
                     </button>
                 </div>

@@ -55,4 +55,21 @@
         </div>
     </div>
     {{/if}}
+
+    {{#if ws.shards}}
+    <div>
+        <h2>Shards</h2>
+        
+        <div>
+            {{#each ws.shards}}
+            <div>
+                <h3>{{this.id}}</h3>
+                lastPingTimestamp: {{this.lastPingTimestamp}}
+                ping: {{this.ping}} ms
+                status: {{this.status}}
+            </div>
+            {{/each}}
+        </div>
+    </div>
+    {{/if}}
 </div>

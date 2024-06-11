@@ -7,7 +7,7 @@
 
     <div>
         <h2>Application</h2>
-        
+
         <div>
             <h3>Id</h3>
             <span>{{id}}</span>
@@ -18,20 +18,26 @@
             <span>{{createdAt}}</span>
         </div>
 
+        {{#if name}}
         <div>
             <h3>Name</h3>
             <span>{{name}}</span>
         </div>
+        {{/if}}
 
+        {{#if approximateGuildCount}}
         <div>
             <h3>Approximate Guild Count</h3>
             <span>{{approximateGuildCount}}</span>
         </div>
+        {{/if}}
 
+        {{#if description}}
         <div>
             <h3>Description</h3>
             <span>{{description}}</span>
         </div>
+        {{/if}}
 
         <div>
             <h3>Flags</h3>

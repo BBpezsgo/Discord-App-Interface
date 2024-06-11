@@ -125,8 +125,11 @@
             <foreignObject x="0" y="0" width="32" height="32" mask="url(#svg-mask-avatar-status-round-32)">
                 <img src="{{user.avatarURL}}?size=32">
             </foreignObject>
-            <rect width="10" height="10" x="22" y="22" fill="#80848e" mask="url(#svg-mask-status-offline)">
-            </rect>
+            {{#if client.isReady}}
+            <rect width="10" height="10" x="22" y="22" fill="#23a55a" mask="url(#svg-mask-status-online)"></rect>
+            {{else}}
+            <rect width="10" height="10" x="22" y="22" fill="#80848e" mask="url(#svg-mask-status-offline)"></rect>
+            {{/if}}
         </svg>
 
         <div>
@@ -136,9 +139,15 @@
             <div id="app-status">
                 {{#switch client.ws.status}}
 
-                {{#case 0}}
-                Ready
-                {{/case}}
+                {{#case 0}}Ready{{/case}}
+                {{#case 1}}Connecting{{/case}}
+                {{#case 2}}Reconnecting{{/case}}
+                {{#case 3}}Idle{{/case}}
+                {{#case 4}}Nearly{{/case}}
+                {{#case 5}}Disconnected{{/case}}
+                {{#case 6}}WaitingForGuilds{{/case}}
+                {{#case 7}}Identifying{{/case}}
+                {{#case 8}}Resuming{{/case}}
 
                 {{/switch}}
             </div>

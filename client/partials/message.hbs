@@ -16,9 +16,13 @@
     </div>
     <div style="flex: 1 1 100%;">
         <div class="message-actions">
+            {{#if this.deletable}}
             <button title="Delete">
                 <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M14.25 1c.41 0 .75.34.75.75V3h5.25c.41 0 .75.34.75.75v.5c0 .41-.34.75-.75.75H3.75A.75.75 0 0 1 3 4.25v-.5c0-.41.34-.75.75-.75H9V1.75c0-.41.34-.75.75-.75h4.5Z" class=""></path><path fill="currentColor" fill-rule="evenodd" d="M5.06 7a1 1 0 0 0-1 1.06l.76 12.13a3 3 0 0 0 3 2.81h8.36a3 3 0 0 0 3-2.81l.75-12.13a1 1 0 0 0-1-1.06H5.07ZM11 12a1 1 0 1 0-2 0v6a1 1 0 1 0 2 0v-6Zm3-1a1 1 0 0 1 1 1v6a1 1 0 1 1-2 0v-6a1 1 0 0 1 1-1Z" clip-rule="evenodd"></path></svg>
             </button>
+            {{/if}}
+
+            {{#if this.pinnable}}
             {{#if this.pinned}}
             <button title="Unpin">
                 <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M19.38 11.38a3 3 0 0 0 4.24 0l.03-.03a.5.5 0 0 0 0-.7L13.35.35a.5.5 0 0 0-.7 0l-.03.03a3 3 0 0 0 0 4.24L13 5l-2.92 2.92-3.65-.34a2 2 0 0 0-1.6.58l-.62.63a1 1 0 0 0 0 1.42l9.58 9.58a1 1 0 0 0 1.42 0l.63-.63a2 2 0 0 0 .58-1.6l-.34-3.64L19 11l.38.38ZM9.07 17.07a.5.5 0 0 1-.08.77l-5.15 3.43a.5.5 0 0 1-.63-.06l-.42-.42a.5.5 0 0 1-.06-.63L6.16 15a.5.5 0 0 1 .77-.08l2.14 2.14Z"></path></svg>
@@ -28,9 +32,13 @@
                 <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M19.38 11.38a3 3 0 0 0 4.24 0l.03-.03a.5.5 0 0 0 0-.7L13.35.35a.5.5 0 0 0-.7 0l-.03.03a3 3 0 0 0 0 4.24L13 5l-2.92 2.92-3.65-.34a2 2 0 0 0-1.6.58l-.62.63a1 1 0 0 0 0 1.42l9.58 9.58a1 1 0 0 0 1.42 0l.63-.63a2 2 0 0 0 .58-1.6l-.34-3.64L19 11l.38.38ZM9.07 17.07a.5.5 0 0 1-.08.77l-5.15 3.43a.5.5 0 0 1-.63-.06l-.42-.42a.5.5 0 0 1-.06-.63L6.16 15a.5.5 0 0 1 .77-.08l2.14 2.14Z"></path></svg>
             </button>
             {{/if}}
-            <button title="Link">
+            {{/if}}
+
+            {{#if this.url}}
+            <a title="Link" href="{{this.url}}" target="_blank">
                 <svg role="img" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path fill="currentColor" d="M16.3 14.7a1 1 0 0 1 0-1.4l2.5-2.5a3.95 3.95 0 1 0-5.6-5.6l-2.5 2.5a1 1 0 1 1-1.4-1.4l2.5-2.5a5.95 5.95 0 1 1 8.4 8.4l-2.5 2.5a1 1 0 0 1-1.4 0ZM7.7 9.3a1 1 0 0 1 0 1.4l-2.5 2.5a3.95 3.95 0 0 0 5.6 5.6l2.5-2.5a1 1 0 1 1 1.4 1.4l-2.5 2.5a5.95 5.95 0 0 1-8.4-8.4l2.5-2.5a1 1 0 0 1 1.4 0Z"></path><path fill="currentColor" d="M14.7 10.7a1 1 0 1 0-1.4-1.4l-4 4a1 1 0 0 0 1.4 1.4l4-4Z"></path></svg>
-            </button>
+            </a>
+            {{/if}}
         </div>
         <div>
             <span onclick="userPopup('{{this.authorId}}', event)" class="tooltiptext" style="cursor:pointer;font-weight:bold;font-size:16px;{{#if this.member.displayHexColor}}color:{{this.member.displayHexColor}}{{else}}color:var(--header-primary){{/if}}">
@@ -98,9 +106,15 @@
         <div class="reaction-container">
             {{#each reactions}}
             <div class="reaction{{#if me}} reaction-me{{/if}}" {{#if this.url}}{{else}}
-                style="position:relative;top:-2px" {{/if}}>
-                {{#if this.url}}
-                <img src="{{this.url}}" width="16" height="16">
+                style="position:relative;top:-2px" {{/if}}
+                {{#if me}}
+                onclick="removeReaction('any', '{{../channelId}}', '{{../id}}', { emoji: '{{this.name}}' }).catch(console.error)"
+                {{else}}
+                onclick="addReaction('any', '{{../channelId}}', '{{../id}}', '{{this.name}}').catch(console.error)"
+                {{/if}}
+                >
+                {{#if this.imageURL}}
+                <img src="{{this.imageURL}}" width="16" height="16">
                 {{else}}
                 <span>{{this.name}}</span>
                 {{/if}}
